@@ -1,0 +1,21 @@
+version: "3"
+services:
+  db:
+    # connect using (with password root) docker exec -it pyvinci-server_db_1 psql -h localhost -p 5432 --user=postgres
+    image: postgres:12
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+
+networks:
+  backend:
+
+volumes:
+  db-data:

@@ -1,0 +1,11 @@
+rest:
+  port: 3000
+  allowCORS: false
+
+auth:
+  enabled: true
+
+database:
+  log: true
+  driver: postgres
+  connectionString: postgresql://postgres:root@localhost:5432/pyvinci?sslmode=disable
