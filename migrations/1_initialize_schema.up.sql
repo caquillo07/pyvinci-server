@@ -2,11 +2,13 @@ CREATE TABLE user_record (
   id         SERIAL PRIMARY KEY,
   uid        TEXT        NOT NULL,
   username   TEXT UNIQUE NOT NULL,
+  password   TEXT        NOT NULL,
   created_at TIMESTAMP   NOT NULL,
   updated_at TIMESTAMP   NOT NULL
 );
 
 CREATE INDEX idx_users_uid on user_record (uid);
+CREATE INDEX idx_username_uid on user_record (username);
 
 CREATE TABLE token (
   id          SERIAL PRIMARY KEY,

@@ -22,6 +22,15 @@ type Config struct {
 
 		// Allow CORS
 		AllowCORS bool
+
+	}
+	Auth struct {
+
+		// Whether or not tokens will be verified
+		Enabled bool
+
+		// Secret used to create tokens
+		TokenSecret string
 	}
 
 	Database database.Config

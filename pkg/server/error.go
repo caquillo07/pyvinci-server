@@ -1,26 +1,35 @@
 package server
 
-type publicError interface {
+type PublicError interface {
     PublicError() string
     Code() int
 }
 
-type validationError struct {
+type publicError struct {
     msg string
+    code int
 }
 
-func newValidationError(msg string) error {
-    return validationError{msg: msg}
+func newPublicError(msg string, code int) error {
+    return publicError{msg: msg, code: code}
 }
 
-func (e validationError) Error() string {
+func (e publicError) Error() string {
     return e.msg
 }
 
-func (e validationError) Code() int {
-    return 401
+func (e publicError) Code() int {
+    return e.code
 }
 
-func (e validationError) PublicError() string {
+func (e publicError) PublicError() string {
     return e.Error()
+}
+
+func newValidationError(msg string) error {
+    return publicError{msg: msg, code: 401}
+}
+
+func newNotFoundError(msg string) error {
+    return publicError{msg: msg, code: 404}
 }

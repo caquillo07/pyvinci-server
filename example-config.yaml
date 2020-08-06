@@ -4,6 +4,7 @@ rest:
 
 auth:
   enabled: true
+  tokenSecret: "some-sekret"
 
 database:
   log: true
