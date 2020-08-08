@@ -46,10 +46,6 @@ func (s *Server) createProject(c *fiber.Ctx) error {
 		return err
 	}
 
-	if len(req.Keywords) == 0 {
-		return newValidationError("keywords are required to create project")
-	}
-
 	user, err := model.FindUserByID(s.db, userID)
 	if err != nil {
 		return err
@@ -135,9 +131,6 @@ func (s *Server) getProject(c *fiber.Ctx) error {
 }
 
 func (s *Server) deleteProject(c *fiber.Ctx) error {
-	type GetResponse struct {
-		Project *httpProject `json:"project"`
-	}
 	userID, err := getUserID(c)
 	if err != nil {
 		return newValidationError("valid user_id is required")
@@ -168,4 +161,53 @@ func (s *Server) deleteProject(c *fiber.Ctx) error {
 
 	c.Status(200).Send()
 	return nil
+}
+
+func (s *Server) updateProject(c *fiber.Ctx) error {
+	type UpdateRequest struct {
+		Keywords []string `json:"keywords"`
+	}
+
+	type CreateResponse struct {
+		Project *httpProject `json:"project"`
+	}
+	userID, err := getUserID(c)
+	if err != nil {
+		return newValidationError("valid user_id is required")
+	}
+
+	projectID, err := uuid.FromString(c.Params("project_id"))
+	if err != nil {
+		return newValidationError("valid project_id is required")
+	}
+
+
+
+	var req UpdateRequest
+	if err := c.BodyParser(&req); err != nil {
+		return err
+	}
+
+	user, err := model.FindUserByID(s.db, userID)
+	if err != nil {
+		return err
+	}
+
+	project, err := model.FindProjectByID(s.db, projectID)
+	if err != nil {
+		return err
+	}
+
+	if project.UserID != user.ID {
+		return newNotFoundError("project not found")
+	}
+
+	project.Keywords = req.Keywords
+	if err := project.Update(s.db); err != nil {
+		return err
+	}
+
+	return c.JSON(CreateResponse{
+		Project: projectHttpStruct(project),
+	})
 }

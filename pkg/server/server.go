@@ -59,6 +59,7 @@ func (s *Server) applyRoutes() {
 	v1Api.Post("/users/:user_id/projects", handler(s.createProject))
 	v1Api.Get("/users/:user_id/projects", handler(s.getProjects))
 	v1Api.Get("/users/:user_id/projects/:project_id", handler(s.getProject))
+	v1Api.Put("/users/:user_id/projects/:project_id", handler(s.updateProject))
 	v1Api.Delete("/users/:user_id/projects/:project_id", handler(s.deleteProject))
 }
 

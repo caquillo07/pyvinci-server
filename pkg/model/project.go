@@ -39,3 +39,7 @@ func FindProjectByID(db *gorm.DB, projectID uuid.UUID) (*Project, error) {
 func DeleteProjectByID(db *gorm.DB, projectID uuid.UUID) error {
 	return db.Delete(&Project{}, "id = ?", projectID).Error
 }
+
+func (p *Project) Update(db *gorm.DB) error {
+	return db.Save(p).Error
+}
