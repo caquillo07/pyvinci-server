@@ -11,9 +11,15 @@ github.com/fsnotify/fsnotify
 ## explicit
 github.com/gofiber/fiber
 github.com/gofiber/fiber/middleware
+# github.com/gofiber/jwt v0.2.0
+## explicit
+github.com/gofiber/jwt
 # github.com/gofiber/utils v0.0.9
 github.com/gofiber/utils
 github.com/gofiber/utils/memory
+# github.com/gofrs/uuid v3.3.0+incompatible
+## explicit
+github.com/gofrs/uuid
 # github.com/golang-migrate/migrate/v4 v4.12.2
 ## explicit
 github.com/golang-migrate/migrate/v4

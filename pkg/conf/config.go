@@ -22,7 +22,6 @@ type Config struct {
 
 		// Allow CORS
 		AllowCORS bool
-
 	}
 	Auth struct {
 

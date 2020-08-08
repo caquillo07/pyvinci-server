@@ -6,6 +6,8 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gofiber/basicauth v0.2.2 // indirect
 	github.com/gofiber/fiber v1.13.3
+	github.com/gofiber/jwt v0.2.0
+	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golang-migrate/migrate/v4 v4.12.2
 	github.com/jinzhu/gorm v1.9.15
 	github.com/lib/pq v1.3.0

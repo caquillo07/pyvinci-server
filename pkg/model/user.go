@@ -3,13 +3,13 @@ package model
 import (
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	ID        int
-	UID       string
+	ID        uuid.UUID
 	Username  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -28,7 +28,6 @@ func CreateUser(db *gorm.DB, user *User, password string) error {
 		*User
 		Password string
 	}
-	user.UID = generateUID()
 	u := userRecord{
 		User:     user,
 		Password: password,
@@ -44,6 +43,14 @@ func CreateUser(db *gorm.DB, user *User, password string) error {
 func FindUserByUsername(db *gorm.DB, username string) (*User, error) {
 	var user User
 	if err := db.Where("username = ?", username).Take(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func FindUserByID(db *gorm.DB, id uuid.UUID) (*User, error) {
+	var user User
+	if err := db.Where("id = ?", id).Take(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

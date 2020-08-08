@@ -31,7 +31,7 @@ func (s *Server) register(c *fiber.Ctx) error {
 		return newValidationError("both username and password are required")
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 14)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func (s *Server) register(c *fiber.Ctx) error {
 	}
 
 	return c.Status(201).JSON(&RegisterResponse{
-		ID:        user.UID,
+		ID:        user.ID.String(),
 		Username:  user.Username,
 		CreateAt:  user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
@@ -63,7 +63,7 @@ func (s *Server) login(c *fiber.Ctx) error {
 		CreateAt  time.Time `json:"createAt"`
 		UpdatedAt time.Time `json:"updatedAt"`
 		Token     string    `json:"token"`
-		ExpireAt  int64 `json:"expireAt"`
+		ExpireAt  int64     `json:"expireAt"`
 	}
 
 	var req LoginRequest
@@ -94,7 +94,7 @@ func (s *Server) login(c *fiber.Ctx) error {
 	expireAt := time.Now().Add(time.Hour * 365).Unix()
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = user.Username
-	claims["userId"] = user.UID
+	claims["userId"] = user.ID.String()
 	claims["exp"] = expireAt
 
 	t, err := token.SignedString([]byte(s.config.Auth.TokenSecret))
@@ -112,7 +112,7 @@ func (s *Server) login(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(&LoginResponse{
-		ID:        user.UID,
+		ID:        user.ID.String(),
 		Username:  user.Username,
 		CreateAt:  user.CreatedAt,
 		UpdatedAt: user.CreatedAt,
