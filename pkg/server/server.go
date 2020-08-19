@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gofiber/cors"
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/fiber/middleware"
 	"github.com/gofrs/uuid"
@@ -42,6 +43,7 @@ func (s *Server) applyMiddleware() {
 	s.app.Use(middleware.Logger())
 	s.app.Use(Recover())
 	s.app.Use(middleware.RequestID())
+	s.app.Use(cors.New())
 	// Custom error handler
 	s.app.Settings.ErrorHandler = errorHandler
 }

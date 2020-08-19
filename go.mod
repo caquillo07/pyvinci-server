@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gofiber/basicauth v0.2.2 // indirect
+	github.com/gofiber/cors v0.2.2
 	github.com/gofiber/fiber v1.13.3
 	github.com/gofiber/jwt v0.2.0
 	github.com/gofrs/uuid v3.3.0+incompatible

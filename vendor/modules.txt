@@ -7,6 +7,9 @@ github.com/dgrijalva/jwt-go
 github.com/fsnotify/fsnotify
 # github.com/gofiber/basicauth v0.2.2
 ## explicit
+# github.com/gofiber/cors v0.2.2
+## explicit
+github.com/gofiber/cors
 # github.com/gofiber/fiber v1.13.3
 ## explicit
 github.com/gofiber/fiber
