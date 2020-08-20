@@ -10,3 +10,9 @@ database:
   log: true
   driver: postgres
   connectionString: postgresql://postgres:root@localhost:5432/pyvinci?sslmode=disable
+
+s3:
+  imageBucket: pyvinci-storage
+  accessKey: "access-key"
+  secretKey: "sekret-key"
+

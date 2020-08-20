@@ -33,6 +33,12 @@ type Config struct {
 	}
 
 	Database database.Config
+
+	S3 struct {
+		ImageBucket string
+		AccessKey string
+		SecretKey string
+	}
 }
 
 func InitViper(configFile string) {

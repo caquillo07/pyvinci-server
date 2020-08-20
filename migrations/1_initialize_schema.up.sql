@@ -32,3 +32,12 @@ CREATE TABLE project
     created_at  TIMESTAMP                        NOT NULL,
     updated_at  TIMESTAMP                        NOT NULL
 );
+
+CREATE TABLE image
+(
+  id uuid primary key default uuid_generate_v4(),
+  project_id uuid REFERENCES project (id) NOT NULL,
+  url TEXT NOT NULL,
+  created_at  TIMESTAMP                        NOT NULL,
+  updated_at  TIMESTAMP                        NOT NULL
+);
