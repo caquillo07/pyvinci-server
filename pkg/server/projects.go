@@ -339,7 +339,7 @@ func (s *Server) postProjectImage(c *fiber.Ctx) error {
 	for i, img := range images {
 		response[i] = imageHTTPStruct(img)
 	}
-	return c.JSON(CreateResponse{
+	return c.Status(http.StatusCreated).JSON(CreateResponse{
 		Images: response,
 	})
 }
