@@ -20,10 +20,10 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /build/pyvinci-linux-amd64 den-bot
+COPY --from=builder /build/pyvinci-linux-amd64 pyvinci
 COPY --from=builder /build/example-config.yaml config.yaml
 
-RUN chmod +x den-bot
+RUN chmod +x pyvinci
 
 #Command to run the executable
 CMD [ "./pyvinci", "server" ]
