@@ -40,15 +40,15 @@ CREATE TABLE image
   url TEXT NOT NULL,
   labels_things TEXT ARRAY,
   labels_stuff TEXT ARRAY,
-  mask_labels TEXT ARRAY,
-  masks_nparr BYTEA,
+  masks_labels TEXT ARRAY,
+  masks BYTEA,
   created_at  TIMESTAMP                        NOT NULL,
   updated_at  TIMESTAMP                        NOT NULL
 );
 
 CREATE TABLE jobs
 (
-    id          uuid primary key default uuid_generate_v4(),
+    id uuid primary key default uuid_generate_v4(),
     project_id uuid REFERENCES project (id) NOT NULL,
     result_image_url  TEXT,
     status      TEXT NOT NULL,
