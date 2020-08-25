@@ -29,13 +29,12 @@ type httpProject struct {
 }
 
 type httpImage struct {
-	ID          string    `json:"id"`
-	URL         string    `json:"url"`
-	ProjectID   string    `json:"projectId"`
-	LabelsStuff []string  `json:"labelsStuff,omitempty"`
-	MasksLabels []string  `json:"masksLabels,omitempty"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID        string    `json:"id"`
+	URL       string    `json:"url"`
+	ProjectID string    `json:"projectId"`
+	Labels    []string  `json:"labels,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func projectHTTPStruct(p *model.Project) *httpProject {
@@ -49,14 +48,26 @@ func projectHTTPStruct(p *model.Project) *httpProject {
 }
 
 func imageHTTPStruct(img *model.Image) *httpImage {
+	uniqueLabels := map[string]struct{}{}
+	assignLabels := func(s []string) {
+		for _, l := range s {
+			uniqueLabels[l] = struct{}{}
+		}
+	}
+	assignLabels(img.MasksLabels)
+	assignLabels(img.LabelsStuff)
+	labels := make([]string, 0)
+	for l, _ := range uniqueLabels {
+		labels = append(labels, l)
+	}
+
 	return &httpImage{
-		ID:          img.ID.String(),
-		URL:         img.URL,
-		MasksLabels: img.MasksLabels,
-		LabelsStuff: img.LabelsStuff,
-		ProjectID:   img.ProjectID.String(),
-		CreatedAt:   img.CreatedAt,
-		UpdatedAt:   img.UpdatedAt,
+		ID:        img.ID.String(),
+		URL:       img.URL,
+		Labels:    labels,
+		ProjectID: img.ProjectID.String(),
+		CreatedAt: img.CreatedAt,
+		UpdatedAt: img.UpdatedAt,
 	}
 }
 
