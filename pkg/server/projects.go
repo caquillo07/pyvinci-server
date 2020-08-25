@@ -21,6 +21,7 @@ import (
 type httpProject struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"userId"`
+	Name      string    `json:"name"`
 	Keywords  []string  `json:"keywords"`
 	Labels    []string  `json:"labels"`
 	Status    string    `json:"status"`
@@ -41,6 +42,7 @@ func projectHTTPStruct(p *model.Project) *httpProject {
 	return &httpProject{
 		ID:        p.ID.String(),
 		UserID:    p.UserID.String(),
+		Name:      p.Name,
 		Keywords:  p.Keywords,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
@@ -73,6 +75,7 @@ func imageHTTPStruct(img *model.Image) *httpImage {
 
 func (s *Server) createProject(c *fiber.Ctx) error {
 	type CreateRequest struct {
+		Name     string   `json:"name"`
 		Keywords []string `json:"keywords"`
 	}
 	type CreateResponse struct {
@@ -97,6 +100,7 @@ func (s *Server) createProject(c *fiber.Ctx) error {
 	newProject := &model.Project{
 		Keywords: req.Keywords,
 		UserID:   user.ID,
+		Name:     req.Name,
 	}
 	if err := model.CreateProject(s.db, newProject); err != nil {
 		return err

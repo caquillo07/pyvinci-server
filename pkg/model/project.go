@@ -11,6 +11,7 @@ import (
 type Project struct {
 	ID        uuid.UUID
 	UserID    uuid.UUID `gorm:"column:user_record"`
+	Name      string
 	Keywords  pq.StringArray
 	CreatedAt time.Time
 	UpdatedAt time.Time
