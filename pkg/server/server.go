@@ -67,6 +67,7 @@ func (s *Server) applyRoutes() {
 	v1Api.Get("/users/:user_id/projects/:project_id/images", handler(s.getProjectImages))
 	v1Api.Get("/users/:user_id/projects/:project_id/images/:image_id", handler(s.getProjectImage))
 	v1Api.Delete("/users/:user_id/projects/:project_id/images/:image_id", handler(s.deleteProjectImage))
+	v1Api.Post("/users/:user_id/projects/:project_id/job", handler(s.startProjectJob))
 }
 
 // handler is a wrapper that allows the the server route functions to return

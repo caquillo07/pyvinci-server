@@ -36,8 +36,8 @@ type Config struct {
 
 	S3 struct {
 		ImageBucket string
-		AccessKey string
-		SecretKey string
+		AccessKey   string
+		SecretKey   string
 	}
 }
 

@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/gofiber/fiber"
 	"github.com/gofrs/uuid"
+	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"
 
 	"github.com/caquillo07/pyvinci-server/pkg/model"
@@ -21,16 +22,20 @@ type httpProject struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"userId"`
 	Keywords  []string  `json:"keywords"`
+	Labels    []string  `json:"labels"`
+	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type httpImage struct {
-	ID        string    `json:"id"`
-	URL       string    `json:"url"`
-	ProjectID string    `json:"projectId"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID          string    `json:"id"`
+	URL         string    `json:"url"`
+	ProjectID   string    `json:"projectId"`
+	LabelsStuff []string  `json:"labelsStuff,omitempty"`
+	MasksLabels []string  `json:"masksLabels,omitempty"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 func projectHTTPStruct(p *model.Project) *httpProject {
@@ -45,11 +50,13 @@ func projectHTTPStruct(p *model.Project) *httpProject {
 
 func imageHTTPStruct(img *model.Image) *httpImage {
 	return &httpImage{
-		ID:        img.ID.String(),
-		URL:       img.URL,
-		ProjectID: img.ProjectID.String(),
-		CreatedAt: img.CreatedAt,
-		UpdatedAt: img.UpdatedAt,
+		ID:          img.ID.String(),
+		URL:         img.URL,
+		MasksLabels: img.MasksLabels,
+		LabelsStuff: img.LabelsStuff,
+		ProjectID:   img.ProjectID.String(),
+		CreatedAt:   img.CreatedAt,
+		UpdatedAt:   img.UpdatedAt,
 	}
 }
 
@@ -150,8 +157,20 @@ func (s *Server) getProject(c *fiber.Ctx) error {
 		return newNotFoundError("project not found")
 	}
 
+	projectRes := projectHTTPStruct(project)
+
+	// see if the project has a pending job to fill out the information
+	job, err := model.FindJobForProject(s.db, projectID)
+	if err != nil && !gorm.IsRecordNotFoundError(err) {
+		return err
+	}
+
+	if job != nil {
+		projectRes.Status = job.Status
+	}
+
 	return c.JSON(GetResponse{
-		Project: projectHTTPStruct(project),
+		Project: projectRes,
 	})
 }
 
@@ -502,6 +521,57 @@ func (s *Server) deleteProjectImage(c *fiber.Ctx) error {
 
 	c.Status(200).Send()
 	return nil
+}
+
+func (s *Server) startProjectJob(c *fiber.Ctx) error {
+	type PostResponse struct {
+		JobID  string `json:"jobId"`
+		Status string `json:"status"`
+	}
+
+	userID, err := getUserID(c)
+	if err != nil {
+		return newValidationError("valid user_id is required")
+	}
+
+	projectID, err := uuid.FromString(c.Params("project_id"))
+	if err != nil {
+		return newValidationError("valid project_id is required")
+	}
+
+	user, err := model.FindUserByID(s.db, userID)
+	if err != nil {
+		return err
+	}
+
+	project, err := model.FindProjectByID(s.db, projectID)
+	if err != nil {
+		return err
+	}
+
+	if project.UserID != user.ID {
+		return newNotFoundError("project not found")
+	}
+
+	// make sure there is no jobs already
+	job, err := model.FindJobForProject(s.db, projectID)
+	if err != nil && !gorm.IsRecordNotFoundError(err) {
+		return err
+	}
+
+	if job != nil {
+		return newValidationError("job already exists for this project")
+	}
+
+	newJob, err := model.CreateNewJob(s.db, projectID)
+	if err != nil {
+		return nil
+	}
+
+	return c.Status(201).JSON(PostResponse{
+		Status: newJob.Status,
+		JobID:  newJob.ID.String(),
+	})
 }
 
 func s3BucketURL(bucketName string) string {
